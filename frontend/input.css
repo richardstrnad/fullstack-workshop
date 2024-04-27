@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  blur-back {
+    @apply bg-base-700/50 rounded-md shadow-md backdrop-blur-sm
+  }
+}

@@ -42,7 +42,7 @@ pub fn ShoppingList(list_uuid: Signal<String>, change_signal: Signal<ListChanged
         Some(Ok(list)) => rsx! {
             div { class: "grid place-items-center min-h-500",
                 ul {
-                    class: "p-2 bg-base-700 w-200 rounded gap-1",
+                    class: "p-8 bg-base-700/50 rounded-md shadow-md backdrop-blur-sm w-200 rounded gap-1",
                     for i in list {
                         li {
                             key: "{i.uuid}",
@@ -218,7 +218,7 @@ pub fn Profile() -> Element {
 pub fn Layout() -> Element {
     rsx! {
         div {
-            class: "flex flex-col w-screen h-screen from-purple-500 to-pink-500 bg-gradient-to-br text-base-200",
+            class: "flex flex-col w-screen h-screen from-purple-500 to-pink-500 bg-gradient-to-br text-base-100",
             div {
                 class: "p-2 font-bold",
                 Link { class: "p-4", to: Route::LoadOrCreateList{}, "Home" }
@@ -320,9 +320,9 @@ pub fn Lists() -> Element {
 
     match &*lists_request.read_unchecked() {
         Some(Ok(lists)) => rsx! {
-            div { class: "grid place-items-center min-h-500",
+            div { class: "grid bg-base-700/50 rounded-md shadow-md backdrop-blur-sm place-items-center min-h-500",
                 ul {
-                    class: "p-2 bg-base-700 w-200 rounded gap-1",
+                    class: "p-6 w-200 gap-1",
                     for list in lists {
                         li {
                             key: "{list}",
