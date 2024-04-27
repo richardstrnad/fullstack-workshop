@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use model::PostShopItem;
 
-struct ListChanged;
+pub struct ListChanged;
 
 use crate::{
     controllers::{create_list, delete_item, get_items, get_lists, post_item},
@@ -85,19 +85,21 @@ pub fn ItemInput(list_uuid: Signal<String>, change_signal: Signal<ListChanged>) 
         spawn({
             async move {
                 let item_name = item.read().to_string();
-                let author = author.read().to_string();
+                let creator = author.read().to_string();
 
                 let response = post_item(
                     list_uuid.read().as_str(),
                     PostShopItem {
                         title: item_name,
-                        posted_by: author,
+                        posted_by: creator,
                     },
                 )
                 .await;
 
                 if response.is_ok() {
                     change_signal.write();
+                    item.set("".to_string());
+                    author.set("".to_string());
                 }
             }
         });
@@ -216,9 +218,9 @@ pub fn Profile() -> Element {
 pub fn Layout() -> Element {
     rsx! {
         div {
-            class: "flex flex-col w-screen h-screen bg-base-800 text-base-200",
+            class: "flex flex-col w-screen h-screen from-purple-500 to-pink-500 bg-gradient-to-br text-base-200",
             div {
-                class: "bg-base-700",
+                class: "p-2 font-bold",
                 Link { class: "p-4", to: Route::LoadOrCreateList{}, "Home" }
                 Link { class: "p-4", to: Route::Profile{}, "Profile" }
                 Link { class: "p-4", to: Route::Lists{}, "Lists" }
