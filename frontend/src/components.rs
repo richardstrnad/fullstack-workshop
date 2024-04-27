@@ -1,9 +1,11 @@
 use dioxus::prelude::*;
 use model::PostShopItem;
 
+struct ListChanged;
+
 use crate::{
-    controllers::{delete_item, get_items, post_item},
-    ListChanged, Route,
+    controllers::{create_list, delete_item, get_items, post_item},
+    Route,
 };
 
 #[component]
@@ -146,8 +148,8 @@ fn ItemDeleteButton(
 ) -> Element {
     let onclick = move |_| {
         spawn({
-            let item_id = item_id.clone();
             let list_uuid = list_uuid.clone();
+            let item_id = item_id.clone();
 
             async move {
                 let response = delete_item(&list_uuid, &item_id).await;
@@ -216,32 +218,94 @@ pub fn Layout() -> Element {
             class: "flex flex-col w-screen h-screen bg-base-800 text-base-200",
             div {
                 class: "bg-base-700",
-                Link { class: "p-4", to: Route::Home{}, "Home" }
+                Link { class: "p-4", to: Route::LoadOrCreateList{}, "Home" }
                 Link { class: "p-4", to: Route::Profile{}, "Profile" }
             }
-            Outlet::<Route>{}
+            div {
+                class: "m-auto m-4 p-8",
+                Outlet::<Route>{}
+            }
         }
     }
 }
 
 #[allow(non_snake_case)]
-pub fn Home() -> Element {
-    let list_uuid = use_signal(|| "9e137e61-08ac-469d-be9d-6b3324dd20ad".to_string());
-    let rust_basel = "Rust Basel";
+#[component]
+pub fn Home(list_uuid: String) -> Element {
+    let list_uuid = use_signal(|| list_uuid);
     let change_signal = use_signal(|| ListChanged);
     rsx! {
         div {
-            class: "m-auto m-4 p-8",
-            h1 {
-                class: "font-bold font-mono text-xl",
-                "Welcome to {rust_basel}"
-            }
-            button {
-                class: "m-4 py-2 px-1 border border-2 border-base-500 rounded-md bg-base-700",
-                "My Button!"
-            }
             ShoppingList{list_uuid, change_signal}
             ItemInput{list_uuid, change_signal}
+        }
+    }
+}
+
+#[component]
+pub fn LoadOrCreateList() -> Element {
+    let nav = use_navigator();
+    let mut list_uuid = use_signal(|| "".to_string());
+
+    let onloadsubmit = move |_| {
+        spawn({
+            async move {
+                let uuid_value = list_uuid.read().clone();
+                if !uuid_value.is_empty() {
+                    nav.push(Route::Home {
+                        list_uuid: uuid_value,
+                    });
+                }
+            }
+        });
+    };
+
+    let on_create_list_click = move |_| {
+        let nav = nav.clone();
+        spawn({
+            async move {
+                let response = create_list().await;
+                if let Ok(created_list) = response {
+                    nav.push(Route::Home {
+                        list_uuid: created_list.uuid,
+                    });
+                }
+            }
+        });
+    };
+
+    rsx! {
+        div{
+            class: "grid place-content-evently grid-cols-1 md:grid-cols-2 w-full gap-4",
+            div {
+                class: "card glass min-h-500 flex flex-col content-end gap-4 p-4",
+                button{
+                    class: "btn btn-primary",
+                    onclick: on_create_list_click,
+                    "Create new List"
+                }
+            }
+            div { class: "card glass min-h-500",
+                form {
+                    onsubmit: onloadsubmit,
+                    div {
+                        class: "flex flex-col gap-4 p-4",
+                        input{
+                            class:"input input-bordered",
+                            r#type:"text",
+                            placeholder:"Enter UUID here...",
+                            id: "uuid",
+                            name: "uuid",
+                            oninput: move |e| list_uuid.set(e.data.value())
+                        }
+                        button{
+                            class: "btn btn-primary",
+                            r#type: "submit",
+                            "Load existing List"
+                        }
+                    }
+                }
+            }
         }
     }
 }

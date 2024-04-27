@@ -1,7 +1,6 @@
-use components::Layout;
 use dioxus::prelude::*;
 
-use crate::components::{Home, Profile};
+use crate::components::{Home, Layout, LoadOrCreateList, Profile};
 
 mod components;
 mod controllers;
@@ -9,10 +8,12 @@ mod controllers;
 const _STYLE: &str = manganis::mg!(file("./public/tailwind.css"));
 
 #[derive(Routable, Clone)]
-enum Route {
+pub enum Route {
     #[layout(Layout)]
     #[route("/")]
-    Home {},
+    LoadOrCreateList {},
+    #[route("/list/:list_uuid")]
+    Home { list_uuid: String },
     #[route("/profile")]
     Profile {},
 }
@@ -20,8 +21,6 @@ enum Route {
 fn main() {
     launch(App)
 }
-
-struct ListChanged;
 
 #[allow(non_snake_case)]
 pub fn App() -> Element {
