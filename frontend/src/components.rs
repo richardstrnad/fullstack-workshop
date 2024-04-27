@@ -326,7 +326,7 @@ pub fn Lists() -> Element {
                     for list in lists {
                         li {
                             key: "{list}",
-                            Link { class: "p-4 hover:text-sky-600", to: Route::Home{list_uuid: list.to_string()}, "Liste: {list.clone()}" }
+                            Link { class: "hover:text-sky-600", to: Route::Home{list_uuid: list.to_string()}, "Liste: {list.clone()}" }
                         }
                     }
                 }
