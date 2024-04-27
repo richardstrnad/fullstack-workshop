@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::components::{Home, Layout, LoadOrCreateList, Profile};
+use crate::components::{Home, Layout, Lists, LoadOrCreateList, Profile};
 
 mod components;
 mod controllers;
@@ -16,6 +16,8 @@ pub enum Route {
     Home { list_uuid: String },
     #[route("/profile")]
     Profile {},
+    #[route("/lists")]
+    Lists {},
 }
 
 fn main() {

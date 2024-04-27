@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use model::ShoppingListItem;
+use uuid::Uuid;
 
 pub struct InMemoryDatabase {
     inner: HashMap<String, ShoppingList>,
@@ -60,6 +61,10 @@ impl InMemoryDatabase {
 
     fn get_list(&self, list_uuid: &str) -> Option<&ShoppingList> {
         self.inner.get(list_uuid)
+    }
+
+    pub fn get_lists(&self) -> Vec<String> {
+        self.inner.keys().map(|s| s.clone()).collect()
     }
 
     pub fn as_vec(&self, list_uuid: &str) -> Vec<ShoppingListItem> {

@@ -45,3 +45,12 @@ pub async fn create_list() -> Result<CreateListResponse, reqwest::Error> {
         .json::<CreateListResponse>()
         .await
 }
+
+pub async fn get_lists() -> Result<Vec<String>, reqwest::Error> {
+    reqwest::Client::new()
+        .get("http://localhost:3001/lists")
+        .send()
+        .await?
+        .json()
+        .await
+}

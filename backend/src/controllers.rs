@@ -66,3 +66,9 @@ pub async fn create_shopping_list(State(state): State<Database>) -> impl IntoRes
 
     Json(CreateListResponse { uuid })
 }
+
+pub async fn get_lists(State(state): State<Database>) -> impl IntoResponse {
+    let lists = state.read().unwrap().get_lists();
+
+    Json(lists)
+}

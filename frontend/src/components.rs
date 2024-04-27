@@ -4,7 +4,7 @@ use model::PostShopItem;
 struct ListChanged;
 
 use crate::{
-    controllers::{create_list, delete_item, get_items, post_item},
+    controllers::{create_list, delete_item, get_items, get_lists, post_item},
     Route,
 };
 
@@ -180,6 +180,7 @@ fn ItemDeleteButton(
     }
 }
 
+#[component]
 pub fn Profile() -> Element {
     rsx! {
         div {
@@ -220,6 +221,7 @@ pub fn Layout() -> Element {
                 class: "bg-base-700",
                 Link { class: "p-4", to: Route::LoadOrCreateList{}, "Home" }
                 Link { class: "p-4", to: Route::Profile{}, "Profile" }
+                Link { class: "p-4", to: Route::Lists{}, "Lists" }
             }
             div {
                 class: "m-auto m-4 p-8",
@@ -304,6 +306,41 @@ pub fn LoadOrCreateList() -> Element {
                             "Load existing List"
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+#[component]
+pub fn Lists() -> Element {
+    let lists_request = use_resource(move || async move { get_lists().await });
+
+    match &*lists_request.read_unchecked() {
+        Some(Ok(lists)) => rsx! {
+            div { class: "grid place-items-center min-h-500",
+                ul {
+                    class: "p-2 bg-base-700 w-200 rounded gap-1",
+                    for list in lists {
+                        li {
+                            key: "{list}",
+                            Link { class: "p-4 hover:text-sky-600", to: Route::Home{list_uuid: list.to_string()}, "Liste: {list.clone()}" }
+                        }
+                    }
+                }
+            }
+        },
+        Some(Err(err)) => {
+            rsx! {
+                p {
+                    "Error: {err}"
+                }
+            }
+        }
+        None => {
+            rsx! {
+                p {
+                    "Loading items..."
                 }
             }
         }
