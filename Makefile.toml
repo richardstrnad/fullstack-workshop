@@ -1,0 +1,19 @@
+[config]
+unstable_features = ["CTRL_C_HANDLING"]
+
+[tasks.backend-dev]
+install_crate = "cargo-watch"
+command = "cargo"
+args = ["watch", "-w", "backend", "-w", "model", "-x", "run --bin backend"]
+
+[tasks.frontend-dev]
+install_crate = "dioxus-cli"
+command = "dx"
+args = ["serve", "--bin", "frontend", "--hot-reload"]
+
+[tasks.tailwind-dev]
+command = "tailwindcss"
+args = ["-i",  "./frontend/input.css", "-o", "./frontend/public/tailwind.css", "--watch"]
+
+[tasks.dev]
+run_task = { name = ["backend-dev", "tailwind-dev", "frontend-dev"], parallel = true}
