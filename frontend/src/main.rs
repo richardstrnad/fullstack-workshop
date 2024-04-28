@@ -1,6 +1,9 @@
 use dioxus::prelude::*;
 
-use crate::components::{Home, Layout, Lists, LoadOrCreateList, Profile};
+use crate::{
+    components::{Blocks, Home, Layout, Lists, LoadOrCreateList, Profile},
+    controllers::spawn_websocket,
+};
 
 mod components;
 mod controllers;
@@ -18,6 +21,8 @@ pub enum Route {
     Profile {},
     #[route("/lists")]
     Lists {},
+    #[route("/blocks")]
+    Blocks {},
 }
 
 fn main() {
@@ -26,6 +31,9 @@ fn main() {
 
 #[allow(non_snake_case)]
 pub fn App() -> Element {
+    let signal = use_signal_sync(|| String::from("starting..."));
+    spawn(spawn_websocket(signal));
+    use_context_provider(|| signal);
     rsx! {
         Router::<Route>{}
     }

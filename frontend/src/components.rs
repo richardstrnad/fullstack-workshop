@@ -224,6 +224,7 @@ pub fn Layout() -> Element {
                 Link { class: "p-4", to: Route::LoadOrCreateList{}, "Home" }
                 Link { class: "p-4", to: Route::Profile{}, "Profile" }
                 Link { class: "p-4", to: Route::Lists{}, "Lists" }
+                Link { class: "p-4", to: Route::Blocks{}, "Blocks" }
             }
             div {
                 class: "m-auto m-4 p-8",
@@ -345,6 +346,17 @@ pub fn Lists() -> Element {
                     "Loading items..."
                 }
             }
+        }
+    }
+}
+
+#[component]
+pub fn Blocks() -> Element {
+    // let mut counter = use_signal(|| 0);
+    let number = use_context::<Signal<String, SyncStorage>>();
+    rsx! {
+        div {
+            "{number.read()}"
         }
     }
 }
